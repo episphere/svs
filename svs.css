@@ -1,0 +1,41 @@
+body {
+    color:navy;
+    font-family:sans-serif;
+    border-style: solid;
+    border-width: 20;
+    border-color:white
+}
+
+h1 {
+    color:brown
+}
+
+h2 {
+    color:maroon
+}
+
+h3 {
+    color:#3F51B5
+}
+h4 {
+    color:#009688;
+    font-size:large;
+}
+code {
+    color:green;
+    font-style:italic;
+}
+
+a:hover {
+    background-color:yellow;
+    color:red
+}
+
+.code {
+    color:maroon;
+    font-weight:bolder;
+    vertical-align:top
+}
+.label {
+    color:blue
+}
