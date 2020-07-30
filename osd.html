@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-144470321-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-144470321-1');
+</script>
+
+<meta charset="utf-8" />
+<link rel='stylesheet' 
+          type='text/css'
+          media='screen'
+          href='style.css'/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/2.4.0/openseadragon.min.js"></script>
+</head>
+<body>
+<div id="openseadragon1" class="openseadragon"></div>
+<script type="text/javascript">
+var p = "http://imagebox.ebremer.com/iiif/?iiif=https://s3.amazonaws.com//ebremeribox/image.svs";
+console.log("image ID : "+p);
+    var viewer1 = OpenSeadragon({
+        id: "openseadragon1",
+        preserveViewport: true,
+        visibilityRatio:    1,
+        minZoomLevel:       1,
+        defaultZoomLevel:   1,
+        prefixUrl: "/openseadragon/images/",
+        tileSources: {
+                "@context": "http://iiif.io/api/image/2/context.json",
+                "@id": p,
+                "height": 91462,
+                "width": 191352,
+                "profile": [ "http://iiif.io/api/image/2/level2.json" ],
+                "protocol": "http://iiif.io/api/image",
+                "tiles": [{
+                          "scaleFactors": [ 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576],
+                "width": 256
+            }]
+        }
+    });
+</script>
+</body>
+</html>
