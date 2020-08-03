@@ -23,7 +23,7 @@ svs.readJSON=async(url='HALO All Sherlock IDs 07282020_HP0493-001-007.json')=>{
     return xx
 }
 
-svs.readJSON()
+//svs.readJSON()
 
 
 if(typeof(define)!='undefined'){
