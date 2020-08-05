@@ -74,6 +74,7 @@ svs.showImage = async () => {
 
 		el.querySelectorAll("td").forEach(el2 => el2.style.border = "1px solid black")
 	})
+	document.getElementById("openseadragon1").innerHTML = ""
 	const viewer1 = OpenSeadragon({
 		id: "openseadragon1",
 		preserveViewport: true,
@@ -94,7 +95,7 @@ svs.showImage = async () => {
 			}]
 		}
 	});
-	setTimeout(() => document.getElementById("loadingText").style.display = "none", 2000)
+	setTimeout(() => document.getElementById("loadingText").style.display = "none", 5000)
 }
 
 if(typeof(define)!='undefined'){
