@@ -1,12 +1,20 @@
 <head>
     <link rel="stylesheet" href="svs.css">
     <script src="svs.js"></script>
-    <title>svs whole slide viewer</title>
+    <title>Whole Slide Image Viewer</title>
+    <link rel='stylesheet' 
+        type='text/css'
+        media='screen'
+        href='style.css'/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/2.4.0/openseadragon.min.js"></script>
 </head>
 <body>
-<h1>SVS viewer <sup style="font-size:small;color:navy">[<a href="https://github.com/episphere/svs" target="_blank">code</a>] [<a href="https://github.com/episphere/svs/issues/new" target="_blank">issues</a>]</sup></h1>
-<p> URL: <input id="domain" size="50" value="https://storage.googleapis.com/imagebox_test/"> / <input id="fname" size="40" value="Slide-0027816_Y345170_1002394.svs"></p>
-<p>Image Information:</p>
-<hr>
-<iframe id="imgbox" width="100%" height="100%" src='osd.html'>
+    <h1>SVS viewer <sup style="font-size:small;color:navy">[<a href="https://github.com/episphere/svs" target="_blank">code</a>] [<a href="https://github.com/episphere/svs/issues/new" target="_blank">issues</a>]</sup></h1>
+    <p style="font-size: large;"> URL: <input id="domain" size="50" value="https://storage.googleapis.com/imagebox_test/" disabled> / <select id="imageSelect" onchange="svs.showImage()"></select></p>
+    <p id="imageInfo">Image Information: <table id="infoTable"></table></p>
+    <p id="loadingText" style="color: red">Image Loading...</p>
+    <hr>
+    <div id="openseadragon1" class="openseadragon"></div>
+
 </body>
+</html>
