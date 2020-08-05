@@ -175,7 +175,7 @@ svs.loadImage = async (urlInGCP) => {
 if (typeof (define) != 'undefined') {
 	define(svs)
 }
-window.onload = () => fetch(`${window.location.origin}/${window.location.pathname}/mapping.json`).then(async resp => {
+window.onload = () => fetch(`${window.location.origin}${window.location.pathname}mapping.json`).then(async resp => {
 	svs.imageNameToIdMapping = await resp.json()
 	svs.validImageNames = svs.imageNameToIdMapping.map(x => x.ImageTag).sort((a,b) => b.endsWith(".svs") ? 1 : -1)
 	svs.validImageIDs = svs.imageNameToIdMapping.map(x => x["NSLC ID"])
