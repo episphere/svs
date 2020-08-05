@@ -64,7 +64,8 @@ svs.loadHashParams = async () => {
 svs.populateSelects = () => {
 	const imageSelectNameElement = document.getElementById("imageSelectName")
 	const imageSelectIdElement = document.getElementById("imageSelectId")
-
+	imageSelectNameElement.innerHTML = ""
+	imageSelectIdElement.innerHTML = ""
 	svs.validImageNames.forEach((image, idx) => {
 		const correspondingObject = svs.imageNameToIdMapping.find(x => x.ImageTag === image)
 		const nameOptionElement = document.createElement("option")
@@ -83,11 +84,11 @@ svs.populateSelects = () => {
 		imageSelectNameElement.appendChild(nameOptionElement)
 		imageSelectIdElement.appendChild(idOptionElement)
 
-		if (idx === 0 && !hashParams.image) {
+		if (idx === 0 && !hashParams.imageTag) {
 			nameOptionElement.setAttribute("selected", "selected")
 			idOptionElement.setAttribute("selected", "selected")
 			svs.selectImageByName(image)
-		} else if (hashParams.image && hashParams.image === image) {
+		} else if (hashParams.imageTag && hashParams.imageTag === image) {
 			nameOptionElement.setAttribute("selected", "selected")
 			idOptionElement.setAttribute("selected", "selected")
 		}
@@ -106,6 +107,8 @@ svs.selectImageByName = () => {
 	const correspondingObject = svs.imageNameToIdMapping.find(x => x.ImageTag === image)
 	document.getElementById("imageSelectId").value = correspondingObject["NSLC ID"]
 	window.location.hash = `imageTag=${image}&imageNslcId=${correspondingObject["NSLC ID"]}`
+	document.getElementById("openseadragon1").setAttribute("imageTag", correspondingObject.ImageTag)
+	document.getElementById("openseadragon1").setAttribute("imageNslcId", correspondingObject["NSLC ID"])
 	document.getElementById("imageId").innerText = correspondingObject["NSLC ID"]
 }
 
@@ -116,6 +119,8 @@ svs.selectImageById = () => {
 	document.getElementById("imageSelectName").value = correspondingObject.ImageTag
 	window.location.hash = `imageTag=${correspondingObject.ImageTag}&imageNslcId=${image}`
 	document.getElementById("imageId").innerText = correspondingObject["NSLC ID"]
+	document.getElementById("openseadragon1").setAttribute("imageTag", correspondingObject.ImageTag)
+	document.getElementById("openseadragon1").setAttribute("imageNslcId", correspondingObject["NSLC ID"])
 }
 
 svs.loadImage = async (urlInGCP) => {
@@ -127,7 +132,19 @@ svs.loadImage = async (urlInGCP) => {
 
 	const p = `${svs.serverBasePath}/?iiif=${urlInGCP}`;
 	const infoURL = `${p}/info.json`
-	const imageInfo = await (await fetch(infoURL)).json()
+	let imageInfo
+	try {
+		imageInfo = await (await fetch(infoURL)).json()
+	} catch (e) {
+		alert("An error occurred retrieving the image information. Please try again later.")
+		window.history.back()
+		setTimeout(() => {
+			document.getElementById("imageSelectName").value = hashParams.imageTag
+			document.getElementById("imageSelectId").value = hashParams.imageNslcId
+		}, 1000)
+		document.getElementById("loadingText").style.display = "none"
+		return
+	}
 	console.log("image Info : ", imageInfo)
 
 	const infoTable = document.getElementById("infoTable")
