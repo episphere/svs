@@ -24,7 +24,8 @@ svs.readJSON = async (url = 'HALO All Sherlock IDs 07282020_HP0493-001-007.json'
 }
 
 svs.gcsBasePath = "https://storage.googleapis.com/imagebox_test"
-svs.serverBasePath = "https://dl-test-tma.uc.r.appspot.com/iiif"
+// svs.serverBasePath = "https://dl-test-tma.uc.r.appspot.com/iiif"
+svs.serverBasePath = "http://localhost:8080/iiif"
 
 svs.loadHashParams = async () => {
 	hashParams = {}
@@ -46,6 +47,7 @@ svs.loadHashParams = async () => {
 			return
 		} else {
 			svs.loadImage(`${svs.gcsBasePath}/${hashParams.imageTag}`)
+			document.getElementById("imageId").innerText = correspondingObject["NSLC ID"]
 		}
 	} else if (hashParams.imageNslcId && svs.validImageIDs.includes(hashParams.imageNslcId)) {
 		const correspondingObject = svs.imageNameToIdMapping.find(x => x["NSLC ID"] === hashParams.imageNslcId)
@@ -57,6 +59,7 @@ svs.loadHashParams = async () => {
 			return
 		} else {
 			svs.loadImage(`${svs.gcsBasePath}/${correspondingObject.imageTag}`)
+			document.getElementById("imageId").innerText = correspondingObject["NSLC ID"]
 		}
 	}
 }
@@ -92,10 +95,10 @@ svs.populateSelects = () => {
 			nameOptionElement.setAttribute("selected", "selected")
 			idOptionElement.setAttribute("selected", "selected")
 		}
-		if (image.endsWith(".ndpi")) {
-			nameOptionElement.setAttribute("disabled", "true")
-			idOptionElement.setAttribute("disabled", "true")
-		}
+		// if (image.endsWith(".ndpi")) {
+		// 	nameOptionElement.setAttribute("disabled", "true")
+		// 	idOptionElement.setAttribute("disabled", "true")
+		// }
 	})
 
 	
@@ -109,7 +112,6 @@ svs.selectImageByName = () => {
 	window.location.hash = `imageTag=${image}&imageNslcId=${correspondingObject["NSLC ID"]}`
 	document.getElementById("openseadragon1").setAttribute("imageTag", correspondingObject.ImageTag)
 	document.getElementById("openseadragon1").setAttribute("imageNslcId", correspondingObject["NSLC ID"])
-	document.getElementById("imageId").innerText = correspondingObject["NSLC ID"]
 }
 
 svs.selectImageById = () => {
@@ -118,17 +120,16 @@ svs.selectImageById = () => {
 	const correspondingObject = svs.imageNameToIdMapping.find(x => x["NSLC ID"] === image)
 	document.getElementById("imageSelectName").value = correspondingObject.ImageTag
 	window.location.hash = `imageTag=${correspondingObject.ImageTag}&imageNslcId=${image}`
-	document.getElementById("imageId").innerText = correspondingObject["NSLC ID"]
 	document.getElementById("openseadragon1").setAttribute("imageTag", correspondingObject.ImageTag)
 	document.getElementById("openseadragon1").setAttribute("imageNslcId", correspondingObject["NSLC ID"])
 }
 
 svs.loadImage = async (urlInGCP) => {
 
-	if (urlInGCP.substr(urlInGCP.length - 4, 4) === "ndpi") {
-		alert("NDPI Images not yet supported!")
-		return
-	}
+	// if (urlInGCP.substr(urlInGCP.length - 4, 4) === "ndpi") {
+	// 	alert("NDPI Images not yet supported!")
+	// 	return
+	// }
 
 	const p = `${svs.serverBasePath}/?iiif=${urlInGCP}`;
 	const infoURL = `${p}/info.json`
@@ -147,23 +148,23 @@ svs.loadImage = async (urlInGCP) => {
 	}
 	console.log("image Info : ", imageInfo)
 
-	const infoTable = document.getElementById("infoTable")
-	infoTable.innerHTML = ""
-	infoTable.style.width = '20%'
-	infoTable.style.border = "1px solid black"
-	infoTable.style.textAlign = "center"
-	document.getElementById("imageInfo").appendChild(infoTable)
-	Object.entries(imageInfo).forEach(([key, val]) => {
-		if (!key.trim().startsWith("@")) {
-			key = key.slice(0, 1).toUpperCase() + key.slice(1)
-			infoTable.innerHTML += `<tr><td>\n${key}</td><td>${val}</td></tr>`
-		}
-	})
-	infoTable.querySelectorAll("tr").forEach(el => {
-		el.style.border = "1px solid black"
+	// const infoTable = document.getElementById("infoTable")
+	// infoTable.innerHTML = ""
+	// infoTable.style.width = '20%'
+	// infoTable.style.border = "1px solid black"
+	// infoTable.style.textAlign = "center"
+	// document.getElementById("imageInfo").appendChild(infoTable)
+	// Object.entries(imageInfo).forEach(([key, val]) => {
+	// 	if (!key.trim().startsWith("@")) {
+	// 		key = key.slice(0, 1).toUpperCase() + key.slice(1)
+	// 		infoTable.innerHTML += `<tr><td>\n${key}</td><td>${val}</td></tr>`
+	// 	}
+	// })
+	// infoTable.querySelectorAll("tr").forEach(el => {
+	// 	el.style.border = "1px solid black"
 
-		el.querySelectorAll("td").forEach(el2 => el2.style.border = "1px solid black")
-	})
+	// 	el.querySelectorAll("td").forEach(el2 => el2.style.border = "1px solid black")
+	// })
 
 	document.getElementById("openseadragon1").innerHTML = ""
 	const viewer1 = OpenSeadragon({
