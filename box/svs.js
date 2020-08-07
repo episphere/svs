@@ -10,6 +10,9 @@ const boxAccessTokenEndpoint = "https://api.box.com/oauth2/token"
 const boxAppBasePath = "https://nih.app.box.com"
 const boxBasePath = "https://api.box.com/2.0"
 
+svs.gcsBasePath = "https://storage.googleapis.com/imagebox_test"
+svs.serverBasePath = "https://dl-test-tma.uc.r.appspot.com/iiif"
+// svs.serverBasePath = "http://localhost:8080/iiif"
 
 const urlParams = {}
 svs.loadURLParams = () => {
@@ -91,9 +94,6 @@ svs.readJSON = async (url = 'HALO All Sherlock IDs 07282020_HP0493-001-007.json'
   return xx
 }
 
-svs.gcsBasePath = "https://storage.googleapis.com/imagebox_test"
-// svs.serverBasePath = "https://dl-test-tma.uc.r.appspot.com/iiif"
-svs.serverBasePath = "http://localhost:8080/iiif"
 
 svs.loadHashParams = async () => {
   hashParams = {}
