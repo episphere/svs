@@ -1,6 +1,6 @@
 importScripts("./geotiff.js")
 
-const tileServerBasePath = "http://localhost:8000/iiif"
+const tileServerBasePath = location.host.includes("localhost") ? "http://localhost:8000/iiif" : "https://episphere.github.io/svs/boxv2/iiif"
 const imageInfoContext = "https://iiif.io/api/image/2/context.json"
 let tiff = {}
 let image = {}

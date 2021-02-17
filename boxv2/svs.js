@@ -12,7 +12,7 @@ const boxBasePath = "https://api.box.com/2.0"
 
 svs.gcsBasePath = "https://storage.googleapis.com/imagebox_test"
 // svs.serverBasePath = "https://dl-test-tma.uc.r.appspot.com/iiif"
-svs.serverBasePath = "http://localhost:8000/iiif"
+svs.serverBasePath = window.location.host.includes("localhost") ? "http://localhost:8000/iiif" : "https://episphere.github.io/svs/boxv2/iiif"
 
 const urlParams = {}
 svs.loadURLParams = () => {
