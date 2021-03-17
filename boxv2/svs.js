@@ -44,7 +44,6 @@ const isLoggedIn = async () => {
 }
 
 const getAccessToken = async (type, token) => {
-  console.log(":LANSFPOIweue")
   const requestType = type === "refresh_token" ? type : "code"
   try {
     const resp = await (await fetch(boxAccessTokenEndpoint, {
@@ -70,7 +69,6 @@ const storeCredsToLS = (boxCreds) => {
     'created_at': Date.now(),
     ...boxCreds
   }
-  console.log("KDSJFOIWEUFB")
   window.localStorage.box = JSON.stringify(newCreds)
 }
 
@@ -154,7 +152,7 @@ svs.loadImage = async (url, id) => {
       "profile": ["http://iiif.io/api/image/2/level2.json"],
       "protocol": "http://iiif.io/api/image",
       "tiles": [{
-        "scaleFactors": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576],
+        "scaleFactors": [1, 4, 16, 64, 256, 1024],
         "width": 256
       }]
     },

@@ -24,7 +24,7 @@ svs.readJSON = async (url = 'HALO All Sherlock IDs 07282020_HP0493-001-007.json'
 }
 
 svs.gcsBasePath = "https://storage.googleapis.com/imagebox_test"
-svs.serverBasePath = "https://dl-test-tma.uc.r.appspot.com/iiif"
+svs.serverBasePath = "https://imagebox-cloudrun-test-oxxe7c4jbq-uc.a.run.app/iiif"
 // svs.serverBasePath = "http://localhost:8080/iiif"
 
 svs.loadHashParams = async () => {
