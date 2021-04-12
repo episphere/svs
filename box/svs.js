@@ -1,10 +1,10 @@
 svs = {}
-window.location.replace(window.location.pathname.replace("box", "boxv2"))
+// window.location.replace(window.location.pathname.replace("box", "boxv2"))
 
 const client_id = window.location.host.includes("localhost") ? "52zad6jrv5v52mn1hfy1vsjtr9jn5o1w" : "1n44fu5yu1l547f2n2fgcw7vhps7kvuw"
 const client_secret = window.location.host.includes("localhost") ? "2rHTqzJumz8s9bAjmKMV83WHX1ooN4kT" : "2ZYzmHXGyzBcjZ9d1Ttsc1d258LiGGVd"
 const state = "sALTfOrSEcUrITy"
-const redirect_uri = window.location.host.includes("localhost") ? "http://localhost:8000/box" : "https://episphere.github.io/svs/box"
+const redirect_uri = window.location.host.includes("localhost") ? "http://localhost:8081/box/" : "https://episphere.github.io/svs/box"
 
 const boxAuthEndpoint = encodeURI(`https://account.box.com/api/oauth2/authorize?response_type=code&client_id=${client_id}&state=${state}&redirect_uri=${redirect_uri}`)
 const boxAccessTokenEndpoint = "https://api.box.com/oauth2/token"
@@ -12,8 +12,7 @@ const boxAppBasePath = "https://nih.app.box.com"
 const boxBasePath = "https://api.box.com/2.0"
 
 svs.gcsBasePath = "https://storage.googleapis.com/imagebox_test"
-// svs.serverBasePath = "https://dl-test-tma.uc.r.appspot.com/iiif"
-// svs.serverBasePath = "https://imagebox-cloudrun-test-oxxe7c4jbq-uc.a.run.app/iiif"
+svs.serverBasePath = "https://imageboxv2-oxxe7c4jbq-uc.a.run.app/iiif"
 // svs.serverBasePath = "http://localhost:8080/iiif"
 
 const urlParams = {}
@@ -109,14 +108,14 @@ svs.loadHashParams = async () => {
 
 svs.loadFromURL = () => document.getElementById("imageURL").value.length > 0 ? svs.loadImage(document.getElementById("imageURL").value) : {}
 
-svs.loadImage = async (url, id="710606247714") => {
+svs.loadImage = async (url, id="710606247714", format="svs") => {
 
   // if (url.substr(url.length - 4, 4) === "ndpi") {
   // 	alert("NDPI Images not yet supported!")
   // 	return
   // }
 
-  const p = `${svs.serverBasePath}/?iiif=${url}`;
+  const p = `${svs.serverBasePath}/?format=${format}&iiif=${url}`;
   const infoURL = `${p}/info.json`
   let imageInfo
   try {
@@ -155,31 +154,31 @@ svs.loadImage = async (url, id="710606247714") => {
     }
   });
   setTimeout(() => document.getElementById("loadingText").style.display = "none", 5000)
-  viewer1.addHandler("canvas-click", (e) => {
-    e.preventDefaultAction = true
-    const pos = viewer1.viewport.pointFromPixel(e.position)
-    const tiledImage = viewer1.world.getItemAt(0)
-    if (tiledImage) {
-      const tilesClicked =  tiledImage.lastDrawn.filter((tile) => tile.bounds.containsPoint(pos))
-      const smallestTileClicked = tilesClicked.reduce((minTile, tile) => tile.level > minTile.level ? tile : minTile, {level: 0})
-      console.log(smallestTileClicked)
-      const rect = document.createElement("div")
-      rect.setAttribute("id", `${Math.floor(Math.random()*1000)}`)
-      rect.setAttribute("class", "wsiAnnotation")
-      viewer1.addOverlay({element: rect, location: smallestTileClicked.bounds})
-      const newMetadata = JSON.parse(localStorage.fileMetadata)
-      if (newMetadata["wsiAnnotation"]) {
-        newMetadata["wsiAnnotation"].rects.push([smallestTileClicked.bounds.x, smallestTileClicked.bounds.y, smallestTileClicked.bounds.width, smallestTileClicked.bounds.height, smallestTileClicked.bounds.degree])
-      }
-      else {
-        newMetadata["wsiAnnotation"] = {
-          rects: [[smallestTileClicked.bounds.x, smallestTileClicked.bounds.y, smallestTileClicked.bounds.width, smallestTileClicked.bounds.height, smallestTileClicked.bounds.degree]]
-        }
-      }
+  // viewer1.addHandler("canvas-click", (e) => {
+  //   e.preventDefaultAction = true
+  //   const pos = viewer1.viewport.pointFromPixel(e.position)
+  //   const tiledImage = viewer1.world.getItemAt(0)
+  //   if (tiledImage) {
+  //     const tilesClicked =  tiledImage.lastDrawn.filter((tile) => tile.bounds.containsPoint(pos))
+  //     const smallestTileClicked = tilesClicked.reduce((minTile, tile) => tile.level > minTile.level ? tile : minTile, {level: 0})
+  //     console.log(smallestTileClicked)
+  //     const rect = document.createElement("div")
+  //     rect.setAttribute("id", `${Math.floor(Math.random()*1000)}`)
+  //     rect.setAttribute("class", "wsiAnnotation")
+  //     viewer1.addOverlay({element: rect, location: smallestTileClicked.bounds})
+  //     const newMetadata = JSON.parse(localStorage.fileMetadata)
+  //     if (newMetadata["wsiAnnotation"]) {
+  //       newMetadata["wsiAnnotation"].rects.push([smallestTileClicked.bounds.x, smallestTileClicked.bounds.y, smallestTileClicked.bounds.width, smallestTileClicked.bounds.height, smallestTileClicked.bounds.degree])
+  //     }
+  //     else {
+  //       newMetadata["wsiAnnotation"] = {
+  //         rects: [[smallestTileClicked.bounds.x, smallestTileClicked.bounds.y, smallestTileClicked.bounds.width, smallestTileClicked.bounds.height, smallestTileClicked.bounds.degree]]
+  //       }
+  //     }
 
-      svs.updateMetadata(id, "wsiAnnotation", newMetadata["wsiAnnotation"])
-    }
-  })
+  //     svs.updateMetadata(id, "wsiAnnotation", newMetadata["wsiAnnotation"])
+  //   }
+  // })
 }
 
 svs.getMetadata = async (id) => {
@@ -266,7 +265,8 @@ svs.filePicker = () => {
   filePicker.addListener('choose', async (item) => {
     document.getElementById("loadingText").style.display = "block"
     const boxOpenDownloadURL = await svs.getDownloadURL(item[0].id)
-    svs.loadImage(boxOpenDownloadURL, item[0].id)
+    const fileFormat = item[0].name.substring(item[0].name.lastIndexOf(".")+ 1)
+    svs.loadImage(boxOpenDownloadURL, item[0].id, fileFormat)
   });
   filePicker.show("0", JSON.parse(localStorage.box).access_token, {
     container: '#filePickerContainer',
@@ -296,7 +296,7 @@ window.onload = async () => {
   if (await isLoggedIn()) {
     svs.loginSuccess()
   } else if (urlParams["code"]) {
-    let replaceURLPath = window.location.host.includes("localhost") ? "/box" : "/svs/box"
+    let replaceURLPath = window.location.host.includes("localhost") ? "/box/" : "/svs/box/"
     window.history.replaceState({}, "", `${replaceURLPath}`)
     try {
       await getAccessToken("authorization_code", urlParams["code"])

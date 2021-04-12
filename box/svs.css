@@ -41,3 +41,11 @@ a:hover {
 .label {
     color:blue
 }
+
+.openseadragon {
+    width:      1024px;
+    height:     800px;
+    border:     1px solid black;
+    color:      #333; /* text color for messages */
+    background-color: black;
+}
