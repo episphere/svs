@@ -24,7 +24,7 @@ svs.readJSON = async (url = 'HALO All Sherlock IDs 07282020_HP0493-001-007.json'
 }
 
 svs.gcsBasePath = "https://storage.googleapis.com/imagebox_test"
-svs.serverBasePath = "https://imagebox-cloudrun-test-oxxe7c4jbq-uc.a.run.app/iiif"
+svs.serverBasePath = "https://imageboxv2-oxxe7c4jbq-uc.a.run.app/iiif"
 // svs.serverBasePath = "http://localhost:8080/iiif"
 
 svs.loadHashParams = async () => {
@@ -130,7 +130,7 @@ svs.loadImage = async (urlInGCP) => {
 	// 	alert("NDPI Images not yet supported!")
 	// 	return
 	// }
-
+	const format = urlInGCP.endsWith(".ndpi") ? "ndpi" : "svs"
 	const p = `${svs.serverBasePath}/?iiif=${urlInGCP}`;
 	const infoURL = `${p}/info.json`
 	let imageInfo
