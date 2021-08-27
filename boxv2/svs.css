@@ -1,9 +1,7 @@
 body {
     color:navy;
     /* font-family:sans-serif; */
-    border-style: solid;
-    border-width: 20;
-    border-color:white
+    padding-top: 0.3rem;
 }
 
 h1 {
@@ -44,4 +42,43 @@ a:hover {
 
 .wsiAnnotation {
     outline: red solid;
+}
+
+#wsiZoomSliderDiv {
+    display: grid;
+    grid-template-columns: 20px auto 100px;
+    column-gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+#wsiZoomSliderText {
+    height: fit-content;
+}
+
+#wsiZoomSlider, #wsiZoomSlider + datalist {
+    --slider-width: 100%;
+}
+
+#wsiZoomSlider {
+    width: var(--slider-width);
+    margin-left: 0;
+    margin-right: 1rem;
+}
+
+#wsiZoomSlider + datalist {
+    display: grid;
+    grid-template-columns: calc((var(--slider-width) / ((var(--list-length) - 1) * 2)) * 4/5) repeat(calc(var(--list-length) - 2), calc(var(--slider-width) / (var(--list-length) - 1))) calc((var(--slider-width) - 12px)/ ((var(--list-length) - 1) * 2) + 6px);
+}
+#wsiZoomSlider + datalist option {
+    display: inline-block;
+    text-align: center;
+    font-size: 10px;
+    padding: 0;
+}
+#wsiZoomSlider + datalist option:first-child {
+    text-align: left;
+}
+#wsiZoomSlider + datalist option:last-child {
+    text-align: right;
 }
