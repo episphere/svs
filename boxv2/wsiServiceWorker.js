@@ -133,7 +133,7 @@ const getImagesInPyramid = (imageIdentifier, firstOnly=false) =>
     // if (!tiff[imageId].imageURL || Date.now() > (tiff[imageId].imageLoadedAt + 14*60*1000)) {
     //   await refreshImageURLFromBox(imageId)
     // }
-    console.log(imageIdentifier)
+    // console.log(imageIdentifier)
     try {
       tiff[imageIdentifier].image = tiff[imageIdentifier].image || ( await GeoTIFF.fromUrl(imageIdentifier, { cache: false }) )
 
@@ -186,6 +186,39 @@ const getImageIndexByRatio = async (imageId, tileWidthRatio) => {
   }
 }
 
+const getImageThumbnail = async (imageIdentifier, tileParams) => {
+  const parsedTileParams = Object.entries(tileParams).reduce((parsed, [key, val]) => {
+    if (val) {
+      parsed[key] = parseInt(val)
+    }
+    return parsed
+  }, {})
+
+  const { thumbnailWidthToRender } = parsedTileParams
+  if (!Number.isInteger(thumbnailWidthToRender)) {
+    console.error("Thumbnail Request missing critical parameters!", thumbnailWidthToRender)
+    return
+  }
+
+  if (!tiff[imageIdentifier]?.image || tiff[imageIdentifier].image.loadedCount === 0) {
+    await getImagesInPyramid(imageIdentifier, false)
+  }
+
+  const thumbnailImage = await tiff[imageIdentifier].image.getImage(1)
+  const thumbnailHeightToRender = Math.floor(thumbnailImage.getHeight() * thumbnailWidthToRender / thumbnailImage.getWidth())
+
+  const x = Date.now()
+
+  let data = await thumbnailImage.readRasters({
+    width: thumbnailWidthToRender,
+    height: thumbnailHeightToRender
+  })
+  // console.log('Time Taken for Thumbnail:', Date.now() - x)
+
+  const imageResponse = await convertToImage(data, thumbnailWidthToRender, thumbnailHeightToRender)
+  return imageResponse
+}
+
 const getImageTile = async (imageIdentifier, tileParams) => {
   const parsedTileParams = Object.entries(tileParams).reduce((parsed, [key, val]) => {
     if (val) {
@@ -211,7 +244,7 @@ const getImageTile = async (imageIdentifier, tileParams) => {
   const tileWidthRatio = Math.floor(tileWidth / tileWidthToRender)
   const bestImageIndex = await getImageIndexByRatio(imageIdentifier, tileWidthRatio)
   // const bestImageIndex = parsedTileParams.bestImageIndex >= 0 ? parsedTileParams.bestImageIndex : getImageIndexByRatio(imageIdentifier, tileWidthRatio)
-  console.log("BEST INDEX", bestImageIndex, "\n")
+  // console.log("BEST INDEX", bestImageIndex, "\n")
   const bestImageInTiff = await tiff[imageIdentifier].image.getImage(bestImageIndex)
   const bestImageWidth = bestImageInTiff.getWidth()
   const bestImageHeight = bestImageInTiff.getHeight()
@@ -237,8 +270,13 @@ const getImageTile = async (imageIdentifier, tileParams) => {
       tileInImageBottomCoord,
     ],
   })
-  console.log('Time Taken:', Date.now() - x)
+  // console.log('Time Taken:', Date.now() - x)
 
+  const imageResponse = await convertToImage(data, tileWidthToRender, tileHeightToRender)
+  return imageResponse
+}
+
+const convertToImage = async (data, width, height) => {
   let imageData = []
   data[0].forEach((val, ind) => {
     imageData.push(val)
@@ -247,9 +285,9 @@ const getImageTile = async (imageIdentifier, tileParams) => {
     imageData.push(255)
   })
 
-  const cv = new OffscreenCanvas(tileWidthToRender, tileHeightToRender)
+  const cv = new OffscreenCanvas(width, height)
   const ctx = cv.getContext("2d")
-  ctx.putImageData( new ImageData(Uint8ClampedArray.from(imageData), tileWidthToRender, tileHeightToRender), 0, 0 )
+  ctx.putImageData( new ImageData(Uint8ClampedArray.from(imageData), width, height), 0, 0 )
   const blob = await cv.convertToBlob({
     type: "image/jpeg",
     quality: 1.0,
@@ -270,8 +308,10 @@ self.addEventListener("fetch", (e) => {
       return
    
     } else if (e.request.url.includes("/full/")) {
-      e.respondWith(new Response(JSON.stringify({}), { status: 404 }))
-   
+      // e.respondWith(new Response(JSON.stringify({}), { status: 404 }))
+      regex = /full\/(?<thumbnailWidthToRender>[0-9]+?),[0-9]*?\/(?<thumbnailRotation>[0-9]+?)\//
+      const thumnbnailParams = regex.exec(e.request.url).groups
+      e.respondWith(getImageThumbnail(decodeURIComponent(identifier), thumnbnailParams))
     } else if (e.request.url.endsWith("/default.jpg")) {
       regex = /\/(?<tileTopX>[0-9]+?),(?<tileTopY>[0-9]+?),(?<tileWidth>[0-9]+?),(?<tileHeight>[0-9]+?)\/(?<tileWidthToRender>[0-9]+?),[0-9]*?\/(?<tileRotation>[0-9]+?)\//
       const tileParams = regex.exec(e.request.url).groups

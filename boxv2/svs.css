@@ -82,3 +82,22 @@ a:hover {
 #wsiZoomSlider + datalist option:last-child {
     text-align: right;
 }
+
+#progressBarContainer {
+    position: relative;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    z-index: 190;
+    transition: opacity 0.4s;
+}
+
+#progressBar {
+    width:0%;
+    background: #0061d5;
+    box-shadow: 0 1px 5px 0 #e4f4ff;
+    height: 3px;
+    max-width: 100%;
+    transition: width 0.2s linear;
+}
