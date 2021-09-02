@@ -328,6 +328,7 @@ svs.loadBoxImageFromId = async (id, name) => {
 }
 
 svs.loadImage = async (url) => {
+  
   document.getElementById("imageURL").value = url
   if (url.length < 100) {
     svs.modifyHashString({
@@ -361,9 +362,7 @@ svs.loadImage = async (url) => {
     // document.getElementById("loadingText").style.display = "none"
     return
   }
-  console.log("image Info : ", imageInfo)
-
-  document.getElementById("openseadragon").innerHTML = ""
+  console.log("Image Info : ", imageInfo)
   
   const tileSource = {
     "@context": imageInfo["@context"],
@@ -387,7 +386,7 @@ svs.loadImage = async (url) => {
       imageLoaderLimit: 5,
       timeout: 180*1000,
       tileSources: tileSource,
-      crossOrigin: "Anonymous",
+      crossOriginPolicy: "Anonymous",
       immediateRender: false
     })
     
@@ -406,17 +405,6 @@ svs.loadImage = async (url) => {
 
   } else {
     svs.removePanAndZoomFromHash()
-    // svs.viewer = OpenSeadragon({
-    //   id: "openseadragon",
-    //   preserveViewport: true,
-    //   visibilityRatio: 1,
-    //   minZoomImageRatio: 1,
-    //   prefixUrl: "https://episphere.github.io/svs/openseadragon/images/",
-    //   imageLoaderLimit: 5,
-    //   timeout: 180*1000,
-    //   tileSources: tileSource
-    // })
-    svs.viewer.canvas.querySelector("canvas").getContext("2d").clearRect(0, 0, svs.viewer.canvas.width, svs.viewer.canvas.height)
     svs.viewer.open(tileSource)
   }
 
@@ -453,7 +441,7 @@ svs.loadImage = async (url) => {
           </datalist>
           </div>
           <input id="wsiZoomSliderText" type="text" value="${roundToPrecision(svs.viewer.viewport.getZoom(), 3)}X" onfocus="this.value = this.value.slice(0, -1); this.setAttribute('type', 'number');" onfocusout="this.setAttribute('type', 'text'); this.value = this.value + 'X';" onchange="svs.handleZoomSlider(this)" disabled="true" />
-          `
+        `
         document.getElementById("viewerParent").appendChild(zoomSliderDiv)
       }
       zoomSliderDiv.querySelectorAll("input").forEach(input => input.removeAttribute("disabled") )

@@ -131,28 +131,32 @@ svs.loadImage = async (url, id="710606247714", format="svs") => {
     return
   }
   console.log("image Info : ", imageInfo)
+  const tileSource = {
+    "@context": imageInfo["@context"],
+    "@id": p,
+    "height": parseInt(imageInfo.height),
+    "width": parseInt(imageInfo.width),
+    "profile": ["http://iiif.io/api/image/2/level2.json"],
+    "protocol": "http://iiif.io/api/image",
+    "tiles": [{
+      "scaleFactors": [1, 4, 16, 64, 256, 1024],
+      "width": 256
+    }]
+  }
 
-  document.getElementById("openseadragon").innerHTML = ""
-  viewer1 = OpenSeadragon({
-    id: "openseadragon",
-    preserveViewport: true,
-    visibilityRatio: 1,
-    minZoomLevel: 1,
-    defaultZoomLevel: 1,
-    prefixUrl: "/openseadragon/images/",
-    tileSources: {
-      "@context": imageInfo["@context"],
-      "@id": p,
-      "height": parseInt(imageInfo.height),
-      "width": parseInt(imageInfo.width),
-      "profile": ["http://iiif.io/api/image/2/level2.json"],
-      "protocol": "http://iiif.io/api/image",
-      "tiles": [{
-        "scaleFactors": [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576],
-        "width": 256
-      }]
-    }
-  });
+  if (!viewer1) {
+    viewer1 = OpenSeadragon({
+      id: "openseadragon",
+      preserveViewport: true,
+      visibilityRatio: 1,
+      minZoomLevel: 1,
+      defaultZoomLevel: 1,
+      prefixUrl: "/openseadragon/images/",
+      tileSources: tileSource
+    });
+  } else {
+    viewer1.open(tileSource)
+  }
   setTimeout(() => document.getElementById("loadingText").style.display = "none", 5000)
   // viewer1.addHandler("canvas-click", (e) => {
   //   e.preventDefaultAction = true
@@ -310,6 +314,7 @@ window.onload = async () => {
     document.getElementById("boxLoginBtn").style = "display: block"
     return
   }
+  viewer1 = undefined
 }
 
 window.onhashchange = svs.loadHashParams
